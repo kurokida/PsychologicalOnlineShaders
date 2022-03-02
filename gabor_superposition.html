@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://pixijs.download/release/pixi.js"></script>
+</head>
+<body></body>
+<script>
+    const app = new PIXI.Application({ backgroundColor: 0x808080 });
+    document.body.appendChild(app.view);
+
+    const gabor_width = 500;
+
+    // create a null image element
+    const img_element = document.createElement('img');
+    img_element.width = gabor_width;
+    img_element.height = gabor_width;
+
+    const left_gabor = PIXI.Sprite.from(img_element)
+
+    // center the sprite's anchor point
+    left_gabor.anchor.set(0.5);
+    left_gabor.x = app.screen.width / 2;
+    left_gabor.y = app.screen.height / 2;
+
+    // This program is based on 
+    // (a) the vertex shader of Psychtoolbox/PsychOpenGL/PsychGLSLShaders/BasicGaborShader.vert.txt 
+    // https://github.com/Psychtoolbox-3/Psychtoolbox-3/blob/master/Psychtoolbox/PsychOpenGL/PsychGLSLShaders/BasicGaborShader.vert.txt
+    // and (b) the fragment shader of Psychtoolbox/PsychOpenGL/PsychGLSLShaders/BasicGaborShader.frag.txt
+    // https://github.com/Psychtoolbox-3/Psychtoolbox-3/blob/master/Psychtoolbox/PsychOpenGL/PsychGLSLShaders/BasicGaborShader.frag.txt
+    // 
+    // In this program, the vertex shader is embedded in the fragment shader for simplicity.
+    const fragmentSrc = `
+        precision mediump float;
+
+        uniform float Contrast;
+        uniform float Phase;
+        uniform float angle_in_degrees; // tilt
+        uniform float spatial_freq;
+        uniform float SpaceConstant;
+        uniform float disableNorm;
+        uniform float disableGauss;
+        uniform float modulateColor_R;
+        uniform float modulateColor_G;
+        uniform float modulateColor_B;
+        uniform float modulateColor_Alpha;
+        uniform float offset_R;
+        uniform float offset_G;
+        uniform float offset_B;
+        uniform float offset_Alpha;
+        uniform float centerX;
+        uniform float centerY;
+        uniform float contrastPreMultiplicator;
+        uniform float min_validModulationRange;
+        uniform float max_validModulationRange;
+
+        void main() {
+            const float twopi     = 2.0 * 3.141592654;
+            const float sqrtof2pi = 2.5066282746;
+            /* Conversion factor from degrees to radians: */
+            const float deg2rad = 3.141592654 / 180.0;
+            
+            float Angle = deg2rad * angle_in_degrees;
+            float FreqTwoPi = spatial_freq * twopi;
+            float Expmultiplier = -0.5 / (SpaceConstant * SpaceConstant);
+            float mc = disableNorm + (1.0 - disableNorm) * (1.0 / (sqrtof2pi * SpaceConstant));
+
+            vec3 modulateColor = vec3(modulateColor_R, modulateColor_G, modulateColor_B);
+
+            vec3 baseColor = modulateColor * mc * Contrast * contrastPreMultiplicator;
+
+            vec2 pos = gl_FragCoord.xy - vec2(centerX, centerY);
+
+            /* Compute (x,y) distance weighting coefficients, based on rotation angle: */
+            vec2 coeff = vec2(cos(Angle), sin(Angle)) * FreqTwoPi;
+
+            /* Evaluate sine grating at requested position, angle and phase: */
+            float sv = sin(dot(coeff, pos) + Phase);
+
+            /* Compute exponential hull for the gabor: */
+            float ev = disableGauss + (1.0 - disableGauss) * exp(dot(pos, pos) * Expmultiplier);
+
+            /* Multiply/Modulate base color and alpha with calculated sine/gauss      */
+            /* values, add some constant color/alpha Offset, assign as final fragment */
+            /* output color: */
+
+            vec4  Offset = vec4(offset_R, offset_G, offset_B, offset_Alpha);
+                    
+            // Be careful not to change the transparency. Note that the type of the baseColor valuable is vec3 not vec4.
+            gl_FragColor = vec4(baseColor * clamp(ev * sv, min_validModulationRange, max_validModulationRange), modulateColor_Alpha) + Offset;
+
+        }`
+
+    const uniforms = {
+        Contrast: 40,
+        Phase: 0,
+        angle_in_degrees: -60,
+        spatial_freq: 0.05,
+        SpaceConstant: 30,
+        disableNorm: 0,
+        disableGauss: 0,
+        modulateColor_R: 1.0,
+        modulateColor_G: 1.0,
+        modulateColor_B: 1.0,
+        modulateColor_Alpha: 1.0,
+        offset_R: 0.0,
+        offset_G: 0.0,
+        offset_B: 0.0,
+        offset_Alpha: 0.0,
+        centerX: app.screen.width / 2,
+        centerY: app.screen.height / 2,
+        contrastPreMultiplicator: 1,
+        min_validModulationRange: -2,
+        max_validModulationRange: 2,
+    }
+    const myFilter = new PIXI.Filter(null, fragmentSrc, uniforms);
+    myFilter.blendMode = PIXI.BLEND_MODES.ADD;
+
+    // Perhaps if we could do the same thing as the Psychtoolbox function below, multiple gabor patches can be presented in superimposed form.
+    // PsychImaging('AddTask', 'General', 'FloatingPoint32BitIfPossible');
+
+    app.stage.addChild(left_gabor);
+
+    left_gabor.filters = [myFilter];
+
+</script>
+
+</html>
