@@ -20,11 +20,11 @@ Reference: [https://pixijs.download/release/docs/index.html](https://pixijs.down
 
 PixiJS is used by [PsychoJS](https://github.com/psychopy/psychojs) and I am currently developing [a plugin](https://jspsychophysics.hes.kyushu-u.ac.jp/) to incorporate PixiJS into [jsPsych](https://www.jspsych.org/7.1/).
 
-There are probably two ways to write shaders using PixiJS: (a) using [PIXI.Filter]((https://pixijs.download/release/docs/PIXI.Filter.html)) and (b) using [PIXI.Shader](https://pixijs.download/release/docs/PIXI.Shader.html) and [PIXI.Mesh](https://pixijs.download/release/docs/.PIXI.Mesh.html) Here is [the demo program for (a)](https://pixijs.io/examples/#/filters-advanced/shadertoy-filter-rendertexture.js), and [the demo program for (b)](https://pixijs.io/examples/#/mesh-and-shaders/shadertoy-mesh.js)
+There are probably two ways to write shaders using PixiJS: (a) using [PIXI.Filter](https://pixijs.download/release/docs/PIXI.Filter.html) and (b) using [PIXI.Shader](https://pixijs.download/release/docs/PIXI.Shader.html) and [PIXI.Mesh](https://pixijs.download/release/docs/PIXI.Mesh.html) Here is [the demo program for (a)](https://pixijs.io/examples/#/filters-advanced/shadertoy-filter-rendertexture.js), and [the demo program for (b)](https://pixijs.io/examples/#/mesh-and-shaders/shadertoy-mesh.js)
 
 # Sample code
 
-I have successfully presented a gabor patch using PixiJS.Filter. See drifting_gabor.html. Each uniforms is consistent with that of [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor) although I added a new variable named disableGauss.
+I have successfully presented a gabor patch using PixiJS.Filter. See [drifting_gabor.html](https://github.com/kurokida/PsychologicalOnlineShaders/blob/main/drifting_gabor.html). Each uniforms is consistent with that of [CreateProceduralGabor](http://psychtoolbox.org/docs/CreateProceduralGabor) although I added a new variable named disableGauss.
 
 [Demonstration](https://www.hes.kyushu-u.ac.jp/~kurokid/PsychologicalOnlineShaders/drifting_gabor.html)
 
@@ -32,7 +32,7 @@ I have successfully presented a gabor patch using PixiJS.Filter. See drifting_ga
 
 Currently, multiple gabor patches couldn't be presented in superimposed form although it is possible in a labo-based program provided by Psychtoolbox. See [GarboriumDemo](http://psychtoolbox.org/docs/GarboriumDemo). 
 
-I have tried to create a program similar to the GarboriumDemo, but have yet to get it to work. See gabor_superposition.html.
+I have tried to create a program similar to the GarboriumDemo, but have yet to get it to work. See [gabor_superposition.html](https://github.com/kurokida/PsychologicalOnlineShaders/blob/main/gabor_superposition.html).
 Perhaps if we could do the same thing as the Psychtoolbox function below, multiple gabor patches can be presented in superimposed form.
 
 ```matlab
@@ -45,4 +45,4 @@ The following is an excerpt from [the PsychImaging help page](http://psychtoolbo
 
 [Incomplete demonstration](https://www.hes.kyushu-u.ac.jp/~kurokid/PsychologicalOnlineShaders/gabor_superposition.html)
 
-As an alternative, I have created a program that presents only two gabor patches in superimposed form. See two_gabor_superposition.html and a [demonstration](https://www.hes.kyushu-u.ac.jp/~kurokid/PsychologicalOnlineShaders/two_gabor_superposition.html)
+As an alternative, I have created a program that presents only two gabor patches in superimposed form. See [two_gabor_superposition.html](https://github.com/kurokida/PsychologicalOnlineShaders/blob/main/two_gabor_superposition.html) and [a demonstration](https://www.hes.kyushu-u.ac.jp/~kurokid/PsychologicalOnlineShaders/two_gabor_superposition.html)
